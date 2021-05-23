@@ -20,11 +20,6 @@ let transports: any[] = [
 
 require('winston-mongodb');
 mongoose.connect(keys.mongo_url, { useNewUrlParser: true, autoIndex: false, useUnifiedTopology: true });
-// mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
-// 	console.log('collectionName: ',collectionName);
-// 	console.log('methodName: ',methodName);
-// 	console.log('methodArgs: ',methodArgs);
-// });
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
