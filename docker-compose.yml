@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    container_name: mongo-db
+    command: "--bind_ip_all --replSet rs0"
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: playground
