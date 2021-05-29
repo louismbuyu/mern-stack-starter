@@ -11,8 +11,9 @@ export const wrapAsyncWithTransaction = (fn) => {
 	return (req, res, next) => {
 		fn(req, res, next).catch((error) => {
 			req.transactionSession.abortTransaction();
-			req.transactionSession.endSession();
 			next(error);
+		}).finally(() => {
+			req.transactionSession.endSession();
 		});
 	};
 };

@@ -38,10 +38,9 @@ router.post('/new',
 	passport.authenticate('jwt', { session: false }),
 	withTransaction,
 	wrapAsyncWithTransaction( async (req, res) => {
-		const post = await createPostWithSession(req.user._id, { post: req.body.post }, req.transactionSession);
+		const post = await createPostWithSession(req.user.id, { post: req.body.post }, req.transactionSession);
 		await req.transactionSession.commitTransaction();
 		res.send(post);
-		await req.transactionSession.endSession();
 	}));
 
 
