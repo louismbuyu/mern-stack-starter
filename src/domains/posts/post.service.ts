@@ -4,7 +4,7 @@ import {convertPostRequestToPostSchema, convertPostSchemaToPostModel} from './po
 import {ClientSession} from 'mongoose';
 import {UserCollection} from '../users/user.schema';
 
-export const createPost = async (userId: string, postRequest: PostRequest, session: ClientSession): Promise<Post> => {
+export const createPostWithSession = async (userId: string, postRequest: PostRequest, session: ClientSession): Promise<Post> => {
 	const partialPostSchema = convertPostRequestToPostSchema(postRequest);
 	const savedPostSchema = await PostCollection.insertMany([{...partialPostSchema, user: userId }], { session });
 	await UserCollection.findOneAndUpdate({_id: userId },

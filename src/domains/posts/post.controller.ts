@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
-import {validator, wrapAsync} from '../../utils/utils';
-import {createPost} from './post.service';
+import {validator, wrapAsync, wrapAsyncWithTransaction} from '../../utils/utils';
+import {createPostWithSession} from './post.service';
 import {ValidPostRequestSchema} from './post.model';
 import mongoose from 'mongoose';
 const router = Router();
@@ -13,7 +13,7 @@ router.post('/',
 		const session = await mongoose.startSession();
 		session.startTransaction();
 		try {
-			const post = await createPost(req.user.id, { post: req.body.post }, session);
+			const post = await createPostWithSession(req.user.id, { post: req.body.post }, session);
 			await session.commitTransaction();
 			return res.send(post);
 		} catch (e) {
@@ -24,5 +24,26 @@ router.post('/',
 			session.endSession();
 		}
 	}));
+
+const withTransaction = (req, res, next) => {
+	mongoose.startSession().then((clientSession) => {
+		clientSession.startTransaction();
+		req.transactionSession = clientSession;
+		next();
+	});
+};
+
+router.post('/new',
+	validator.body(ValidPostRequestSchema),
+	passport.authenticate('jwt', { session: false }),
+	withTransaction,
+	wrapAsyncWithTransaction( async (req, res) => {
+		const post = await createPostWithSession(req.user._id, { post: req.body.post }, req.transactionSession);
+		await req.transactionSession.commitTransaction();
+		res.send(post);
+		await req.transactionSession.endSession();
+	}));
+
+
 
 module.exports = router;

@@ -22,6 +22,6 @@ export const newUsername = (email): string => {
 
 export const generateTokenForUserId = (userId: string): string => {
 	return jwt.sign({ id: userId }, keys.token_socket,{
-		expiresIn: 60 * 5 // expires in 24 hours times 7 = 7 days
+		expiresIn: 60 * 5 * 7 // expires in 24 hours times 7 = 7 days
 	});
 };

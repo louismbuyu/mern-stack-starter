@@ -7,11 +7,12 @@ export const wrapAsync = (fn) => {
 	};
 };
 
-
-export const wrapAsyncWithSession = (fn) => {
-	// const session = mongoose.startSession();
-	// session.startTransaction();
+export const wrapAsyncWithTransaction = (fn) => {
 	return (req, res, next) => {
-		fn(req, res, next).catch(next);
+		fn(req, res, next).catch((error) => {
+			req.transactionSession.abortTransaction();
+			req.transactionSession.endSession();
+			next(error);
+		});
 	};
 };
